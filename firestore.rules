@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && 
+        request.auth.token.email == 'ramosww6@gmail.com' &&
+        (request.auth.token.email_verified == true || request.auth.token.firebase.sign_in_provider == 'google.com');
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Default deny for all unmatched collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Users / Usuários
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isSignedIn() && isOwner(userId) && (!('role' in request.resource.data) || request.resource.data.role != 'admin' || isAdmin());
+      allow update: if (isOwner(userId) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']) || isAdmin())) || isAdmin();
+      allow delete: if isAdmin();
+    }
+    match /usuarios/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isSignedIn() && isOwner(userId) && (!('role' in request.resource.data) || request.resource.data.role != 'admin' || isAdmin());
+      allow update: if (isOwner(userId) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']) || isAdmin())) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Products / Produtos - Public read, Owner/Admin-only write/delete
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /produtos/{productId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Orders / Pedidos - Public create (checkout), Admin manage/delete, Customer get receipt
+    match /orders/{orderId} {
+      allow create: if true;
+      allow get: if true;
+      allow list: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+    match /pedidos/{orderId} {
+      allow create: if true;
+      allow get: if true;
+      allow list: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // Estoque / Inventory - Public read, Admin-only write
+    match /estoque/{itemId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}

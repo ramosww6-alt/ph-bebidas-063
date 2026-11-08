@@ -1,0 +1,6 @@
+{
+  "name": "PH BEBIDAS 063 - Adega & Delivery",
+  "description": "Adega 24 Horas e Delivery de Bebidas Trincando de Geladas no 063. Cervejas, Combos, Destilados e Gelo com Pedido pelo WhatsApp.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

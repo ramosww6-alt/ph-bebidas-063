@@ -1,0 +1,117 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile / Perfil de Usuário",
+      "description": "Registered customer or admin profile",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "role": { "type": "string", "enum": ["customer", "admin"] },
+        "totalPoints": { "type": "number" },
+        "tierName": { "type": "string", "maxLength": 20 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Product": {
+      "title": "Product Item / Bebidas e Produtos",
+      "description": "Beverage or snack product sold at adega with pricing and stock",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 120 },
+        "category": { "type": "string", "maxLength": 50 },
+        "description": { "type": "string", "maxLength": 500 },
+        "price": { "type": "number" },
+        "originalPrice": { "type": "number" },
+        "volume": { "type": "string", "maxLength": 30 },
+        "image": { "type": "string", "maxLength": 1000 },
+        "isGelada": { "type": "boolean" },
+        "isPromo": { "type": "boolean" },
+        "isBestSeller": { "type": "boolean" },
+        "stockStatus": { "type": "string", "enum": ["in_stock", "out_of_stock", "low_stock"] },
+        "stockQuantity": { "type": "number" },
+        "badge": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "category", "price", "stockStatus"]
+    },
+    "Order": {
+      "title": "Order Record / Pedidos de Entrega",
+      "description": "Customer beverage delivery order",
+      "type": "object",
+      "properties": {
+        "orderNumber": { "type": "string", "maxLength": 30 },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "customerEmail": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "address": { "type": "string", "maxLength": 300 },
+        "neighborhood": { "type": "string", "maxLength": 100 },
+        "street": { "type": "string", "maxLength": 150 },
+        "number": { "type": "string", "maxLength": 20 },
+        "complement": { "type": "string", "maxLength": 100 },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "deliveryFee": { "type": "number" },
+        "pixDiscount": { "type": "number" },
+        "grandTotal": { "type": "number" },
+        "paymentMethod": { "type": "string", "maxLength": 30 },
+        "cashChangeFor": { "type": "string", "maxLength": 50 },
+        "notes": { "type": "string", "maxLength": 300 },
+        "status": { "type": "string", "enum": ["pendente", "em_preparo", "saiu_para_entrega", "entregue", "cancelado"] },
+        "estimatedTime": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["orderNumber", "customerName", "grandTotal", "status"]
+    },
+    "Estoque": {
+      "title": "Estoque / Inventory Item",
+      "description": "Controle de estoque de produtos da adega",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string" },
+        "productName": { "type": "string", "maxLength": 120 },
+        "quantity": { "type": "number" },
+        "minQuantityAlert": { "type": "number" },
+        "status": { "type": "string", "enum": ["in_stock", "low_stock", "out_of_stock"] },
+        "lastUpdated": { "type": "string" }
+      },
+      "required": ["productId", "quantity", "status"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Catálogo de bebidas e produtos da PH Bebidas 063"
+    },
+    "/produtos/{productId}": {
+      "schema": "Product",
+      "description": "Coleção de produtos (alias em português)"
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Contas de usuários autenticados via Firebase Auth"
+    },
+    "/usuarios/{userId}": {
+      "schema": "User",
+      "description": "Coleção de usuários (alias em português)"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Pedidos de delivery realizados no site"
+    },
+    "/pedidos/{orderId}": {
+      "schema": "Order",
+      "description": "Coleção de pedidos de delivery (alias em português)"
+    },
+    "/estoque/{estoqueId}": {
+      "schema": "Estoque",
+      "description": "Controle e auditoria de estoque em tempo real"
+    }
+  }
+}
